@@ -93,3 +93,32 @@ def read_landmarks(landmark_file):
     
     return {'pitch':pitch, 'yaw':yaw, 'roll':roll,
             'eyes':eyes, 'shape':shape}
+
+
+def walk_data(sewa_path, target_path):
+    """For now only goes through each folder, lists useful files and does nothing
+
+    Parameters
+    ----------
+    sewa_path : `pathlib.Path`
+        path to the SEWA data
+    target_path : `pathlib.Path`
+        path to the folder in which to save the processed data
+    """
+    for video_path in sewa_path.iterdir():
+        # print current folder
+        sys.stdout.write('\rprocessing folder {}'.format(video_path))
+        sys.stdout.flush()
+        
+        # Ignore non directories.
+        if not video_path.is_dir():
+            continue
+            
+        sub_target = target_path.joinpath(video_path.name)
+        if not sub_target.exists():
+            sub_target.mkdir()
+
+        valence_paths = sorted(list(video_path.joinpath('valence').glob('*AV*.csv')))
+        arousal_paths = sorted(list(video_path.joinpath('arousal').glob('*AV*.csv')))
+        lld_paths = list(video_path.joinpath('lld').glob('*.arff'))
+        landmarks_paths = sorted(list(video_path.joinpath('landmarks').glob('*/*.txt')))
